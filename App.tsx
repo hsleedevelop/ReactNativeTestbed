@@ -5,8 +5,9 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {StrictMode} from "react";
+import type {PropsWithChildren} from "react";
+
 import {
   SafeAreaView,
   ScrollView,
@@ -15,22 +16,20 @@ import {
   Text,
   useColorScheme,
   View,
-} from 'react-native';
+} from "react-native";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {NavigationContainer} from "@react-navigation/native";
+
+import {Colors, Header} from "react-native/Libraries/NewAppScreen";
+
+import TestComponent1 from "./components/TestComponent1";
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
 function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useColorScheme() === "dark";
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -55,31 +54,47 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+interface InnerAppProps {
+  isDarkMode: boolean;
+  backgroundStyle: {
+    backgroundColor: string;
+  };
+}
+
+const InnerApp: React.FC<InnerAppProps> = props => (
+  <SafeAreaView style={props.backgroundStyle}>
+    <StatusBar
+      barStyle={props.isDarkMode ? "light-content" : "dark-content"}
+      backgroundColor={props.backgroundStyle.backgroundColor}
+    />
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={props.backgroundStyle}>
+      <Header />
+      <View
+        style={{
+          backgroundColor: props.isDarkMode ? Colors.black : Colors.white,
+        }}>
+        <Text>Testbed</Text>
+      </View>
+      <TestComponent1 />
+    </ScrollView>
+  </SafeAreaView>
+);
+
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useColorScheme() === "dark";
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Text>Testbed</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <StrictMode>
+      <NavigationContainer>
+        <InnerApp isDarkMode backgroundStyle={backgroundStyle} />
+      </NavigationContainer>
+    </StrictMode>
   );
 }
 
@@ -90,15 +105,15 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   highlight: {
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });
 
